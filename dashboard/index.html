@@ -17,7 +17,7 @@
   </div>
   <div class="meta">
     <span>Snapshot <b id="meta-asof">—</b></span>
-    <span>Model <b>radar-2</b></span>
+    <span>Model <b>radar-3</b></span>
     <span>Data: DefiLlama public API</span>
   </div>
 </header>
@@ -29,11 +29,17 @@
   <p class="formula">implied value = TVL × 0.30 × growth × maturity × breadth</p>
   <ul>
     <li><b>TVL</b> — the protocol's size today, in whole dollars.</li>
-    <li><b>Growth</b> — its 7-day TVL change, clamped to −50%…+150%, weighted 0.6 (never below 0.55×).</li>
+    <li><b>Growth</b> — its 7-day TVL change, clamped to −50%…+100%, weighted 0.6 (never below 0.55×). A week above +100% is a one-off spike, not momentum, so the model stops rewarding it there.</li>
     <li><b>Maturity</b> — 0.55 + 0.45 × days listed (capped at 4 years): the longer it has run with no token, the more the wait is worth.</li>
     <li><b>Breadth</b> — +2% per extra chain, up to 5: a wider distribution surface.</li>
   </ul>
-  <p class="note">An implied value is the radar's own estimate from the snapshot's figures — never a prediction that a token will launch, or when. A protocol that records no token may still have one its DefiLlama record does not carry.</p>
+  <p class="note">An implied value is the radar's own estimate from the snapshot's figures — never a prediction that a token will launch, or when. A protocol that records no token may still have one its DefiLlama record does not carry. radar-3 tightens the growth clamp from +150% to +100%; everything else is the radar-2 formula.</p>
+</section>
+
+<section class="spotlight card" id="spotlight">
+  <h2>Top 10 by implied value</h2>
+  <p class="note">The ten strongest pre-token protocols on the board. Click one to open its detail and farm plan.</p>
+  <ol id="top10"></ol>
 </section>
 
 <nav class="tabs" id="tabs">
