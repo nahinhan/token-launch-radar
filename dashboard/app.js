@@ -53,11 +53,15 @@
   document.getElementById('meta-asof').textContent = R.as_of;
   var stats = document.getElementById('stats');
   var earlyCount = R.rows.filter(function (r) { return !WATCH[r.slug]; }).length;
+  var totalImplied = R.rows.reduce(function (a, r) { return a + (r.implied_value_usd || 0); }, 0);
+  var topImplied = R.rows.length ? R.rows[0].implied_value_usd : 0;
   [
     ['Watchlist', String(R.watchlist_size), 'no token · $50M+ TVL'],
     ['Board rows', String(R.board_size), 'ranked by implied value'],
     ['Early finds', String(earlyCount), 'below the watchlist floor'],
     ['Live tokens', String(R.live_size), 'already trading, apart'],
+    ['Total implied', money(totalImplied), 'the whole board, summed'],
+    ['Top implied', money(topImplied), R.rows.length ? '#' + R.rows[0].rank + ' · ' + R.rows[0].name : '—'],
   ].forEach(function (s) {
     var d = el('div', 'stat');
     d.appendChild(el('div', 'k', s[0]));
@@ -68,6 +72,21 @@
   document.getElementById('count-watch').textContent = R.watchlist_size;
   document.getElementById('count-early').textContent = earlyCount;
   document.getElementById('count-live').textContent = R.live_size;
+
+  // ---- top 10 spotlight -----------------------------------------------
+  var top10 = document.getElementById('top10');
+  R.rows.slice(0, 10).forEach(function (r) {
+    var li = document.createElement('li');
+    var b = document.createElement('button');
+    b.className = 'spot';
+    b.appendChild(el('span', 'spot-rank', '#' + r.rank));
+    b.appendChild(el('span', 'spot-name', r.name));
+    b.appendChild(el('span', 'spot-tag ' + (WATCH[r.slug] ? 'watch' : 'early'), WATCH[r.slug] ? 'Watchlist' : 'Early'));
+    b.appendChild(el('span', 'spot-val', money(r.implied_value_usd)));
+    b.addEventListener('click', function () { select(r.slug); });
+    li.appendChild(b);
+    top10.appendChild(li);
+  });
 
   // ---- filter options --------------------------------------------------
   function fillSelect(id, values) {
@@ -158,7 +177,7 @@
     var total = state.view === 'live' ? R.live_size : state.view === 'watchlist' ? R.watchlist_size : state.view === 'early' ? earlyCount : R.board_size;
     document.getElementById('showing').textContent =
       'Showing ' + list.length + ' of ' + total + ' · ' +
-      (state.view === 'live' ? 'market capitalisations, not implied values' : 'ranked by the radar-2 model');
+      (state.view === 'live' ? 'market capitalisations, not implied values' : 'ranked by the radar-3 model');
   }
 
   // ---- detail ----------------------------------------------------------
@@ -223,12 +242,22 @@
     var maxBase = 0;
     R.rows.forEach(function (x) { if (x.base_usd > maxBase) maxBase = x.base_usd; });
     bd.appendChild(barRow('Base · TVL × 0.30', 0, Math.log(1 + r.base_usd) / Math.log(1 + maxBase), money(r.base_usd)));
-    bd.appendChild(barRow('Growth ×' + r.growth_multiplier.toFixed(2), 0, (r.growth_multiplier - 0.55) / 1.35, '7d ' + pct(r.change_7d)));
+    bd.appendChild(barRow('Growth ×' + r.growth_multiplier.toFixed(2), 0, (r.growth_multiplier - 0.55) / 1.05, '7d ' + pct(r.change_7d)));
     bd.appendChild(barRow('Maturity ×' + r.maturity_multiplier.toFixed(2), 0, (r.maturity_multiplier - 0.55) / 0.45, ageText(r.age_days)));
     bd.appendChild(barRow('Breadth ×' + r.breadth_multiplier.toFixed(2), 0, (r.breadth_multiplier - 1) / 0.1, (r.chains || []).length + ' chains'));
+    // The running total at each step, so the reader can follow the arithmetic.
+    var afterGrowth = Math.round(r.base_usd * r.growth_multiplier);
+    var afterMaturity = Math.round(afterGrowth * r.maturity_multiplier);
     document.getElementById('d-math').textContent =
-      money(r.base_usd) + ' × ' + r.growth_multiplier.toFixed(2) + ' × ' + r.maturity_multiplier.toFixed(2) + ' × ' + r.breadth_multiplier.toFixed(2) +
-      ' = ' + moneyFull(r.implied_value_usd);
+      money(r.base_usd) + ' × ' + r.growth_multiplier.toFixed(2) + ' = ' + money(afterGrowth) +
+      ' × ' + r.maturity_multiplier.toFixed(2) + ' = ' + money(afterMaturity) +
+      ' × ' + r.breadth_multiplier.toFixed(2) + ' = ' + moneyFull(r.implied_value_usd);
+    // Readiness: where this row sits on the board, in plain words.
+    var readiness = r.rank <= 10 ? 'Top 10 — the strongest ten on the board' :
+      r.rank <= 25 ? 'Top 25 — a leading candidate' :
+      r.rank <= 100 ? 'Top 100 — worth a farm position' : 'Long shot — small, but the model still ranks it';
+    var ready = el('p', 'readiness', readiness);
+    bd.appendChild(ready);
     var steps = document.getElementById('d-steps');
     steps.textContent = '';
     (r.farm_steps || []).forEach(function (s) {
