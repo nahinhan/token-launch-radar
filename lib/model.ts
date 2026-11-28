@@ -5,7 +5,7 @@
 // the same function scores every row, and the dashboard states the formula.
 //
 //   base      = tvl_usd x 0.30
-//   growth    = clamp(change_7d, -50, 150) per cent, 0 when unreported
+//   growth    = clamp(change_7d, -50, 100) per cent, 0 when unreported
 //   growthMult = max(0.55, 1 + (growth / 100) x 0.6)
 //   maturity  = 0.55 + 0.45 x min(age_days, 1460) / 1460 (age unknown: 365)
 //   breadth   = 1 + 0.02 x min(chains - 1, 5), at least 1
@@ -17,6 +17,11 @@
 // its distribution surface already is. A protocol whose token already
 // trades is never ranked: the board shows the market's own value for those,
 // kept apart in the Live view.
+//
+// radar-3 (this version): the growth clamp's top is +100%, not +150%.
+// A single week above +100% is almost always a one-off event — a new pool,
+// a migration, a listing — not momentum a farmer can count on, so the model
+// stops rewarding it past +100%. The floor stays at -50%.
 
 /** The snapshot's protocol entry: exactly the ten fields the sealed input carries. */
 export interface SnapshotProtocol {
@@ -60,7 +65,7 @@ export const MODEL: ModelConstants = {
   base_multiple: 0.3,
   growth_weight: 0.6,
   growth_floor: -50,
-  growth_cap: 150,
+  growth_cap: 100,
   growth_min_multiplier: 0.55,
   maturity_floor: 0.55,
   maturity_range: 0.45,
@@ -71,7 +76,7 @@ export const MODEL: ModelConstants = {
 };
 
 /** The model's version label: the dashboard names it. */
-export const MODEL_VERSION = 'radar-2';
+export const MODEL_VERSION = 'radar-3';
 
 /** How many pre-token protocols below the watchlist floor the early radar carries, by TVL. */
 export const EARLY_ROWS = 260;
