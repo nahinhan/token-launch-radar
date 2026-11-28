@@ -16,7 +16,7 @@ implied value = TVL × 0.30 × growth × maturity × breadth
 ```
 
 - **TVL** — the protocol's size today, in whole dollars.
-- **Growth** — its 7-day TVL change, clamped to −50%…+150%, weighted 0.6 (never below 0.55×).
+- **Growth** — its 7-day TVL change, clamped to −50%…+100%, weighted 0.6 (never below 0.55×). A week above +100% is a one-off spike, not momentum, so radar-3 stops rewarding it there (radar-2 capped at +150%).
 - **Maturity** — 0.55 + 0.45 × days listed (capped at 4 years): the longer it has run with no token, the more the wait is worth.
 - **Breadth** — +2% per extra chain, up to 5: a wider distribution surface.
 
@@ -25,6 +25,10 @@ finds below the watchlist floor — 300 rows. Protocols whose token already
 trades are shown apart, at the market's own values, never ranked. An implied
 value is the radar's own estimate from the snapshot's figures, never a
 prediction that a token will launch, or when.
+
+The dashboard adds a Top 10 spotlight, board totals, and a detail view that
+walks the arithmetic step by step (base → growth → maturity → breadth →
+implied value) with a plain-words readiness label for each protocol.
 
 ## Run it
 
