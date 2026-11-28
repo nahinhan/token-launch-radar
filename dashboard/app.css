@@ -69,6 +69,23 @@ b { font-weight: 700; }
 .model li b { color: var(--text); }
 .note { color: var(--muted); font-size: 12.5px; margin: 10px 0 0; }
 
+.spotlight ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px; }
+.spotlight ol li { margin: 0; }
+.spot {
+  display: flex; align-items: baseline; gap: 8px; width: 100%;
+  background: var(--panel2); color: var(--text);
+  border: 1px solid var(--line); border-radius: 8px;
+  padding: 8px 12px; font-size: 13px; font-family: inherit; cursor: pointer; text-align: left;
+}
+.spot:hover { border-color: var(--accent); }
+.spot-rank { color: var(--accent); font-weight: 700; flex: none; }
+.spot-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.spot-tag { font-size: 11px; font-weight: 700; border-radius: 999px; padding: 1px 8px; flex: none; }
+.spot-tag.watch { background: rgba(251, 191, 36, 0.16); color: var(--amber); }
+.spot-tag.early { background: rgba(52, 211, 153, 0.14); color: var(--accent); }
+.spot-val { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; flex: none; }
+.readiness { color: var(--amber); font-weight: 600; margin-top: 10px; }
+
 .tabs { display: flex; gap: 8px; margin-bottom: 12px; }
 .tabs button {
   background: var(--panel); color: var(--muted);
@@ -114,9 +131,9 @@ td .slug { color: var(--muted); font-size: 12px; }
   width: 30px; height: 30px; cursor: pointer; font-size: 13px;
 }
 .d-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 6px; }
-.d-facts div { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--line); }
-.d-facts div span:first-child { color: var(--muted); }
-.d-facts div span:last-child { font-variant-numeric: tabular-nums; font-weight: 600; }
+.d-facts div { display: flex; justify-content: space-between; gap: 16px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.d-facts div span:first-child { color: var(--muted); flex: none; }
+.d-facts div span:last-child { font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
 .bar-row { display: grid; grid-template-columns: 130px 1fr 64px; gap: 10px; align-items: center; margin-bottom: 8px; font-size: 13px; }
 .bar-row .val { text-align: right; font-variant-numeric: tabular-nums; }
 .bar { height: 8px; background: var(--panel2); border-radius: 999px; overflow: hidden; }
